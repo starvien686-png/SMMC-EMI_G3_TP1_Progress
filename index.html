@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kura Sushi Business Model | Term Project 1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --kura-blue: #002D62;
+            --kura-red: #E3001B;
+            --nav-bg: rgba(255, 255, 255, 0.85);
+            --border-color: #e2e8f0;
+            --shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+            --conclusion-bg: #eff6ff;
+            --conclusion-border: #bfdbfe;
+            --link-color: #2563eb;
+        }
+
+        body.dark-mode {
+            --bg-color: #0f172a;
+            --text-color: #f1f5f9;
+            --card-bg: rgba(30, 41, 59, 0.9);
+            --nav-bg: rgba(30, 41, 59, 0.85);
+            --border-color: #334155;
+            --kura-blue: #60a5fa;
+            --kura-red: #f87171;
+            --conclusion-bg: #172554;
+            --conclusion-border: #1e3a8a;
+            --link-color: #93c5fd;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            overflow-x: hidden;
+            /* Subtle dotted background pattern */
+            background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Language Display Logic */
+        body.lang-en .zh-content { display: none; }
+        body.lang-zh .en-content { display: none; }
+
+        /* Header (Glassmorphism) */
+        header {
+            position: fixed; top: 0; width: 100%; height: 70px;
+            background: var(--nav-bg); border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 2rem; z-index: 1001; transition: 0.3s;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 1rem; }
+
+        /* Persistent Hamburger Menu */
+        .hamburger {
+            background: none; border: none; font-size: 1.8rem; 
+            cursor: pointer; color: var(--text-color);
+            transition: transform 0.3s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .hamburger:hover { transform: scale(1.1); color: var(--kura-red); }
+
+        .logo { font-weight: 700; font-size: 1.5rem; color: var(--kura-blue); display: flex; align-items: center; gap: 8px;}
+        .logo span { color: var(--kura-red); }
+
+        /* Bouncing Cute Sushi Animation */
+        .cute-sushi {
+            font-size: 1.8rem;
+            display: inline-block;
+            animation: bounceSushi 2s infinite ease-in-out;
+            cursor: pointer;
+        }
+        @keyframes bounceSushi {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(15deg); }
+        }
+
+        .header-controls { display: flex; gap: 10px; align-items: center; }
+        .header-controls button {
+            padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color);
+            background: var(--card-bg); color: var(--text-color); cursor: pointer;
+            font-weight: 600; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-family: inherit;
+        }
+        .header-controls button.active { background: var(--kura-blue); color: #fff; border-color: var(--kura-blue); transform: scale(1.05); }
+        .header-controls button:hover:not(.active) { background: var(--border-color); transform: translateY(-2px); }
+
+        /* Animated Conveyor Belt */
+        .conveyor-belt {
+            position: fixed; top: 70px; width: 100%; height: 35px;
+            background: var(--nav-bg); border-bottom: 2px solid var(--border-color);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            z-index: 1000; overflow: hidden; display: flex; align-items: center;
+            box-shadow: inset 0 -2px 5px rgba(0,0,0,0.05);
+        }
+        .sushi-track {
+            display: flex; white-space: nowrap;
+            animation: rollTrack 25s linear infinite;
+            font-size: 1.3rem;
+            /* Duplicate the items to make the infinite loop smooth */
+            gap: 40px;
+        }
+        .sushi-track span { transition: transform 0.2s; cursor: pointer; }
+        .sushi-track span:hover { transform: scale(1.3) rotate(-10deg); }
+        @keyframes rollTrack {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed; left: 0; top: 105px; width: 280px; height: calc(100vh - 105px);
+            background: var(--nav-bg); border-right: 1px solid var(--border-color);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            padding: 2rem 1rem; overflow-y: auto; 
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 999;
+        }
+        .sidebar.collapsed { transform: translateX(-100%); }
+
+        .nav-item {
+            display: flex; align-items: center; padding: 12px 16px; margin-bottom: 8px;
+            border-radius: 8px; text-decoration: none; color: var(--text-color);
+            font-weight: 500; transition: 0.3s; font-size: 0.95rem; position: relative;
+        }
+        .nav-item::before { content: '🍣'; position: absolute; left: 10px; opacity: 0; transition: 0.3s; transform: scale(0); }
+        .nav-item:hover, .nav-item.active { background: var(--kura-blue); color: #ffffff; padding-left: 35px; }
+        .nav-item:hover::before, .nav-item.active::before { opacity: 1; transform: scale(1); }
+
+        /* Main Content */
+        main {
+            margin-left: 280px; margin-top: 105px; padding: 3rem;
+            min-height: calc(100vh - 185px);
+            transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        main.expanded { margin-left: 0; }
+
+        .page-section { display: none; animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .page-section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        .content-card {
+            background: var(--card-bg); border-radius: 16px; padding: 2.5rem;
+            box-shadow: var(--shadow); border: 1px solid var(--border-color);
+            margin-bottom: 2rem; backdrop-filter: blur(8px);
+        }
+
+        h1 { font-size: 2.2rem; margin-bottom: 1.5rem; color: var(--kura-blue); border-bottom: 3px dashed var(--kura-red); display: inline-block; padding-bottom: 5px; }
+        h2 { font-size: 1.4rem; margin-top: 2rem; margin-bottom: 1rem; color: var(--text-color); }
+        p { margin-bottom: 1.2rem; line-height: 1.8; font-size: 1rem; }
+        a { color: var(--link-color); text-decoration: none; word-break: break-all; font-weight: 500; transition: 0.2s; }
+        a:hover { text-decoration: underline; color: var(--kura-red); }
+
+        /* Conclusion Box */
+        .conclusion-box {
+            background-color: var(--conclusion-bg);
+            border-radius: 0 16px 16px 0;
+            padding: 1.5rem; margin-top: 2.5rem;
+            border: 1px solid var(--conclusion-border);
+            border-left: 6px solid var(--kura-blue);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .conclusion-box:hover { transform: translateX(5px); box-shadow: var(--shadow); }
+        .conclusion-box h3 { color: var(--kura-blue); margin-bottom: 0.5rem; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
+        .conclusion-box p { margin: 0; font-weight: 500; }
+
+        /* Footer */
+        footer {
+            margin-left: 280px; padding: 2rem; background: var(--nav-bg);
+            border-top: 1px solid var(--border-color); display: flex;
+            justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem;
+            transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        footer.expanded { margin-left: 0; }
+        .team-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 2rem; font-size: 0.85rem; }
+
+        /* Responsive RWD */
+        @media (max-width: 1024px) {
+            .sidebar { transform: translateX(-100%); width: 260px; }
+            .sidebar.mobile-open { transform: translateX(0); }
+            main, main.expanded, footer, footer.expanded { margin-left: 0; padding: 1.5rem; }
+            .header-controls button { padding: 6px 10px; font-size: 0.85rem; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body class="lang-en">
+
+    <header>
+        <div class="header-left">
+            <button class="hamburger" onclick="toggleSidebar()">☰</button>
+            <div class="logo">
+                <span class="cute-sushi">🍣</span> Kura<span>Sushi</span>
+            </div>
+        </div>
+        <div class="header-controls">
+            <button id="btn-en" class="active" onclick="setLanguage('en')">EN</button>
+            <button id="btn-zh" onclick="setLanguage('zh')">繁中</button>
+            <button onclick="toggleTheme()" id="theme-btn">🌙 Dark</button>
+        </div>
+    </header>
+
+    <div class="conveyor-belt">
+        <div class="sushi-track">
+            <span>🍽️</span><span>🍣</span><span>🍵</span><span>🍤</span><span>🍙</span><span>🍱</span><span>🥢</span><span>🍣</span><span>🍮</span><span>🍤</span>
+            <span>🍽️</span><span>🍣</span><span>🍵</span><span>🍤</span><span>🍙</span><span>🍱</span><span>🥢</span><span>🍣</span><span>🍮</span><span>🍤</span>
+        </div>
+    </div>
+
+    <nav class="sidebar" id="sidebar">
+        <a href="#" class="nav-item active" onclick="showPage('exec')">
+            <span class="en-content">Executive Summary</span><span class="zh-content">執行摘要</span>
+        </a>
+        <a href="#" class="nav-item" onclick="showPage('pestel')">
+            <span class="en-content">1. Macro Analysis (PESTEL)</span><span class="zh-content">1. 宏觀分析 (PESTEL)</span>
+        </a>
+        <a href="#" class="nav-item" onclick="showPage('valuechain')">
+            <span class="en-content">2. Industry Value Chain</span><span class="zh-content">2. 產業價值鏈</span>
+        </a>
+        <a href="#" class="nav-item" onclick="showPage('competitor')">
+            <span class="en-content">3. Competitor Analysis</span><span class="zh-content">3. 競爭者分析</span>
+        </a>
+        <a href="#" class="nav-item" onclick="showPage('porter')">
+            <span class="en-content">4. Porter's Five Forces</span><span class="zh-content">4. 波特五力分析</span>
+        </a>
+        <a href="#" class="nav-item" onclick="showPage('lifecycle')">
+            <span class="en-content">5. Industry Lifecycle</span><span class="zh-content">5. 產業生命週期</span>
+        </a>
+        <a href="#" class="nav-item" onclick="showPage('conclusion4p')">
+            <span class="en-content">6. The 4P Conclusion</span><span class="zh-content">6. 4P 結論</span>
+        </a>
+        <a href="#" class="nav-item" onclick="showPage('sources')">
+            <span class="en-content">7. Sources</span><span class="zh-content">7. 資料來源</span>
+        </a>
+    </nav>
+
+    <main id="main-content">
+        <section id="exec" class="page-section active">
+            <div class="content-card">
+                <h1><span class="en-content">Executive Summary</span><span class="zh-content">執行摘要</span></h1>
+                
+                <div class="en-content">
+                    <p>Based on the TP0 section of the sources, here is an executive summary of Kura Sushi:</p>
+                    <p>Kura Sushi is a global leader in the conveyor-belt sushi industry, operating over 650 stores worldwide and driven by a "Food Revolution" vision to provide safe, affordable, and authentic Japanese dining through technological innovation. Founded in 1977 in Osaka, the company has achieved significant international scale, including listings on the NASDAQ and the Taipei Exchange, and is known for patented systems like the "Sendo-kun" freshness dome and the "Bikkura Pon" gamification system. Strategically, the company is currently pivoting its focus by dissolving its Hong Kong and Shanghai subsidiaries to concentrate capital on the Taiwan market, which has shown stable performance. While Kura Sushi has seen rapid revenue growth—doubling its operating revenue to NT$5.71 billion by 2025—it is currently navigating a decline in net profit margins due to high expansion costs, inflation, and depreciation. Looking ahead, the company is evolving its business model from a traditional restaurant into an integrated dining entertainment platform, increasingly leveraging AI for demand forecasting and supply chain optimization to enhance long-term profitability.</p>
+                </div>
+                <div class="zh-content">
+                    <p>根據資料來源的 TP0 部分，以下是藏壽司的執行摘要：</p>
+                    <p>藏壽司是全球迴轉壽司產業的領導者，在全球經營超過 650 家門市，並以「飲食革命」為願景，透過技術創新提供安全、平價且道地的日式餐飲。公司於 1977 年在大阪成立，已達到顯著的國際規模，包括在納斯達克和台北證券交易所上市，並以「鮮度君」保鮮蓋和「扭蛋」遊戲化系統等專利聞名。在策略上，公司目前正調整重心，解散香港和上海子公司，將資金集中在表現穩定的台灣市場。儘管藏壽司營收快速成長（預計 2025 年營業額將翻倍至 57.1 億新台幣），但由於高昂的擴張成本、通膨和折舊，目前正面臨淨利率下滑的挑戰。展望未來，公司正將其商業模式從傳統餐廳轉型為整合型餐飲娛樂平台，並增加對 AI 的應用以進行需求預測和供應鏈優化，從而提升長期獲利能力。</p>
+                </div>
+
+                <div class="conclusion-box">
+                    <h3>💡 <span class="en-content">Conclusion</span><span class="zh-content">結論</span></h3>
+                    <p class="en-content">Kura Sushi is leveraging its strong technological patents and stable Taiwan market performance to successfully transition from a traditional restaurant into an integrated "dining entertainment platform," using AI and operational scaling to offset current profit margin pressures.</p>
+                    <p class="zh-content">藏壽司正利用其強大的技術專利和穩定的台灣市場表現，成功地從傳統餐廳轉型為整合的「餐飲娛樂平台」，並運用 AI 和營運擴張來抵銷當前淨利率的壓力。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="pestel" class="page-section">
+            <div class="content-card">
+                <h1><span class="en-content">Macro Analysis - PESTEL</span><span class="zh-content">宏觀分析 - PESTEL</span></h1>
+                <p><i>(112212051 IBS3 Gisele - AI used for language refinements)</i></p>
+                
+                <h2><span class="en-content">Politic and Economic</span><span class="zh-content">政治與經濟</span></h2>
+                <div class="en-content">
+                    <p>The current Middle East conflict involving Iran, Iraq, and the United States has led to the closure of the Strait of Hormuz, causing global oil and gas prices to rocket as a vital shipping artery is severed. As Taiwan heavily relies on LNG (Liquified Natural Gas) and crude oil imports from the Middle East, this war has directly caused a surge in both logistics costs for Kura Sushi’s ingredients and utility pricing, particularly for electricity needed to power conveyor belts and industrial refrigerators. Furthermore, since Kura Sushi’s value proposition depends on the freshness of its seafood, these logistical disruptions threaten its supply chain stability. On the consumer side, as the general cost of living rises, customers are likely to shift their spending away from a more high-end dining like Kura Sushi toward more budget-friendly local alternatives.</p>
+                </div>
+                <div class="zh-content">
+                    <p>目前涉及伊朗、伊拉克和美國的中東衝突導致荷莫茲海峽關閉，切斷了重要的航運動脈，引發全球油氣價格飆升。由於台灣高度依賴從中東進口液化天然氣 (LNG) 和原油，這場戰爭直接導致藏壽司的食材物流成本和公用事業價格（特別是驅動迴轉帶和工業冰箱所需的電力）大幅上漲。此外，由於藏壽司的價值主張取決於海鮮的鮮度，這些物流中斷威脅了其供應鏈的穩定性。在消費者端，隨著整體生活成本上升，顧客可能會將消費從像藏壽司這樣較高單價的餐飲，轉向更平價的在地替代選擇。</p>
+                </div>
+                
+                <h2><span class="en-content">Sociocultural</span><span class="zh-content">社會文化</span></h2>
+                <div class="en-content">
+                    <p>Taiwan maintains a very strong cultural affinity for Japanese IP (Intellectual Property), such as anime, Sanrio, and Pokémon. Consumer behavior in Taiwan has shifted significantly toward a "Collector Culture," where there is high demand for cute, limited-edition, and "surprise" items, similar to the global rise of the blind box industry (e.g., POP MART). By strategically collaborating with different high-profile IPs every season, Kura Sushi taps into this macro-social trend of gamified dining. This approach transforms a standard meal into a repeatable cultural experience, making the brand highly attractive to a broad demographic, ranging from young adult collectors to families with children.</p>
+                </div>
+                <div class="zh-content">
+                    <p>台灣對日本 IP（智慧財產權）如動漫、三麗鷗和寶可夢等，保持著極強的文化親和力。台灣的消費行為已顯著轉向「收藏文化」，對可愛、限量版和具「驚喜」感的商品需求極高，這與全球盲盒產業（如 POP MART）的崛起相似。透過每季策略性地與不同知名 IP 合作，藏壽司成功切入了這種遊戲化餐飲的宏觀社會趨勢。這種做法將標準的用餐過程轉變為可重複體驗的文化活動，使該品牌對廣泛的人口群體（從年輕的成年收藏家到有小孩的家庭）極具吸引力。</p>
+                </div>
+
+                <div class="conclusion-box">
+                    <h3>💡 <span class="en-content">Conclusion</span><span class="zh-content">結論</span></h3>
+                    <p class="en-content">While geopolitical conflicts heavily impact Kura Sushi's utility and supply chain costs (Economic/Political), the company strongly counters this by capitalizing on Taiwan's "Collector Culture" through gamified IP collaborations, keeping consumer demand high (Sociocultural).</p>
+                    <p class="zh-content">儘管地緣政治衝突嚴重影響了藏壽司的能源和供應鏈成本（經濟/政治），但公司透過利用台灣的「收藏文化」並結合遊戲化的 IP 合作，成功維持了高度的消費者需求（社會文化）。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="valuechain" class="page-section">
+            <div class="content-card">
+                <h1><span class="en-content">The Industry Value Chain: A Technology-First Approach</span><span class="zh-content">產業價值鏈：科技優先的方法</span></h1>
+                <p><i>（112212052 IBS3 Vivian 50%)</i></p>
+                
+                <div class="en-content">
+                    <p>Kura Sushi has redefined the traditional restaurant model by integrating proprietary technology into every step of the dining experience.</p>
+                    <p>Upstream (Suppliers & Technology): Unlike many competitors, Kura Sushi develops its own "structural capital.” They hold over 30 patents, including the "Sendo-kun" (Mr. Fresh) domes and the "E-Plate" IC chip tracking system. While they source high-quality ingredients like salmon and tuna from global suppliers (Norway, Chile, and the Pacific), they use specialized sushi-making robots to maintain consistency and efficiency</p>
+                    <p>Middle (Operational Processors): The core of the "Sushi War" happens here. Kura Sushi shifted from a traditional counter-seating model to an "E-line" system designed specifically for families.This focus on automation allows for fast production while keeping the environment clean and reducing human error</p>
+                    <p>Downstream (Distribution & The Customer): Kura Sushi sells more than just food; they sell "Dining-as-Entertainment.” By utilizing technology to reduce employee costs, they can offer a highly interactive experience where children are amazed by the conveyor belt and gamified rewards</p>
+                </div>
+                <div class="zh-content">
+                    <p>藏壽司透過將專利技術整合到用餐體驗的每一個環節，重新定義了傳統的餐廳模式。</p>
+                    <p>上游（供應商與技術）：與許多競爭對手不同，藏壽司發展自己的「結構資本」。他們擁有超過 30 項專利，包括「鮮度君」保鮮蓋和「E-Plate」IC 晶片追蹤系統。雖然他們從全球供應商（挪威、智利和太平洋）採購優質食材（如鮭魚和鮪魚），但他們使用專門的壽司製作機器人來保持一致性和效率。</p>
+                    <p>中游（營運處理）：這是「壽司大戰」的核心所在。藏壽司從傳統的吧台座位模式轉向專為家庭設計的「E-line」系統。這種對自動化的專注實現了快速生產，同時保持環境清潔並減少人為錯誤。</p>
+                    <p>下游（通路與顧客）：藏壽司賣的不僅僅是食物；他們賣的是「餐飲即娛樂」。透過利用技術降低員工成本，他們能提供高度互動的體驗，讓孩子們對迴轉帶和遊戲化獎勵感到驚艷。</p>
+                </div>
+
+                <div class="conclusion-box">
+                    <h3>💡 <span class="en-content">Conclusion</span><span class="zh-content">結論</span></h3>
+                    <p class="en-content">Kura Sushi's value chain is entirely driven by its proprietary "Technology-First" approach, integrating over 30 patents across upstream production, middle operations, and downstream customer gamification to maintain efficiency and consistency.</p>
+                    <p class="zh-content">藏壽司的價值鏈完全由其專有的「科技優先」方法驅動，整合了超過 30 項專利，貫穿上游生產、中游營運和下游的顧客遊戲化體驗，以維持效率與一致性。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="competitor" class="page-section">
+            <div class="content-card">
+                <h1><span class="en-content">Competitor Analysis & Competitive Dynamics</span><span class="zh-content">競爭者分析與競爭動態</span></h1>
+                <p><i>(112212052 IBS3 Vivian 50%)</i></p>
+                
+                <h2><span class="en-content">Competitor Analysis: The "Sushi War" in Taiwan</span><span class="zh-content">競爭者分析：台灣的「壽司大戰」</span></h2>
+                <div class="en-content">
+                    <p>As Kura Sushi consolidates its operations to focus on the Taiwan market, competition with rivals like Sushiro and Hama Sushi is reaching a peak</p>
+                    <p>Resource Similarity: Our Strategic "Weapons." We evaluate our competitiveness by comparing our resources to those of our rivals. Technological Advantage: While competitors use basic belts, Kura’s "Smart Kura" (Contactless Dining) system—featuring mobile ordering and automated checkout—is a core competency that many are still struggling to replicate</p>
+                    <p>The Gamification Factor: The "Bikkura Pon" prize system transforms a meal into an interactive game. This "experiential resource" creates high brand loyalty that is difficult for traditional sushi chains to match.</p>
+                    <p>Financial Strength: Being listed on both the NASDAQ and Taipei Exchange gives Kura the capital needed for aggressive expansion, even when net profit margins are under pressure</p>
+                </div>
+                <div class="zh-content">
+                    <p>隨著藏壽司整合其營運以專注於台灣市場，與壽司郎和濱壽司等對手的競爭正達到巔峰。</p>
+                    <p>資源相似性：我們的戰略「武器」。我們透過將自身資源與對手比較來評估競爭力。技術優勢：雖然競爭對手使用基本的迴轉帶，但藏壽司的「Smart Kura」（零接觸餐飲）系統（具備手機點餐和自動結帳功能）是一項核心競爭力，許多業者仍難以複製。</p>
+                    <p>遊戲化因素：「扭蛋」獎勵系統將一頓飯變成了互動遊戲。這種「體驗資源」創造了傳統壽司連鎖店難以匹敵的高品牌忠誠度。</p>
+                    <p>財務實力：在納斯達克和台北證券交易所雙重上市，為藏壽司提供了積極擴張所需的資金，即使在淨利率面臨壓力的情況下也是如此。</p>
+                </div>
+
+                <h2><span class="en-content">Competitive Dynamics: Action vs. Response</span><span class="zh-content">競爭動態：行動與回應</span></h2>
+                <div class="en-content">
+                    <p>The sushi industry is high-pressure, requiring constant strategic moves to survive.</p>
+                    <p>The Strategic Move (Action): In early 2026, Kura Sushi took a bold "Action" by dissolving its Hong Kong and Shanghai subsidiaries. This allows the company to shift all capital and focus to Taiwan, as seen with the opening of their 62nd branch in Kaohsiung in January 2026</p>
+                    <p>The Market Reality (Response): Rivals often respond to expansion with price wars. To avoid a "race to the bottom" on pricing, Kura’s "Response" is a Differentiation Strategy. They are deepening their "Dining-as-Entertainment" posture through IP collaborations (character themes) and immersive experiences to maintain value without cutting prices</p>
+                    <p>Efficiency as a Defense: To counter rising inflation and labor shortages, Kura is accelerating the use of AI for demand forecasting. This helps stabilize the net profit margin (which was 4.6% in 2025) by reducing food waste and optimizing the supply chain</p>
+                </div>
+                <div class="zh-content">
+                    <p>壽司產業壓力極大，需要不斷採取策略行動才能生存。</p>
+                    <p>策略行動 (Action)：在 2026 年初，藏壽司採取了大膽的「行動」，解散了其香港和上海子公司。這讓公司能將所有資金和重心轉移到台灣，正如 2026 年 1 月在高雄開設第 62 家分店所展現的那樣。</p>
+                    <p>市場現實 (Response)：對手通常以價格戰來回應擴張。為了避免在定價上「逐底競爭」，藏壽司的「回應」是差異化策略。他們透過 IP 合作（角色主題）和沉浸式體驗，深化其「餐飲即娛樂」的定位，在不降價的情況下維持價值。</p>
+                    <p>以效率作為防禦：為了對抗不斷上升的通膨和勞動力短缺，藏壽司正在加速使用 AI 進行需求預測。這有助於透過減少食物浪費和優化供應鏈，來穩定淨利率（2025 年為 4.6%）。</p>
+                </div>
+
+                <div class="conclusion-box">
+                    <h3>💡 <span class="en-content">Conclusion</span><span class="zh-content">結論</span></h3>
+                    <p class="en-content">To win the "Sushi War" in Taiwan, Kura Sushi actively avoids damaging price wars; instead, it relies on its financial strength, distinct gamification features (Bikkura Pon), and AI-driven efficiency to differentiate itself from major competitors like Sushiro and Hama Sushi.</p>
+                    <p class="zh-content">為了贏得台灣的「壽司大戰」，藏壽司積極避免具破壞性的價格戰；相反地，它依賴其財務實力、獨特的遊戲化功能（扭蛋）以及 AI 驅動的效率，以區別於壽司郎和濱壽司等主要競爭對手。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="porter" class="page-section">
+            <div class="content-card">
+                <h1><span class="en-content">Industry Analysis - Porter’s Five Force Framework</span><span class="zh-content">產業分析 - 波特五力架構</span></h1>
+                <p><i>(112212051 IBS3 Gisele - AI used for language refinements)</i></p>
+                
+                <h2><span class="en-content">Interfirm Rivalry - High</span><span class="zh-content">同業競爭 - 高</span></h2>
+                <div class="en-content">
+                    <p>The market of Sushi in Taiwan, specifically conveyor belt sushi restaurants, are highly competitive with Kura Sushi, Sushiro, and Hama Sushi owning roughly the same size of market. The concept, target market, and price are relatively the same with a little difference. These rivals often target the shopping malls and stations.<br>
+While the two chains are highly competitive, a slight price gap exists on entry-level items. For example, Sushiro's standard Inari Sushi is priced at NT$30, whereas Kura Sushi prices its version at NT$40. </p>
+                </div>
+                <div class="zh-content">
+                    <p>台灣的壽司市場，特別是迴轉壽司餐廳，競爭非常激烈，藏壽司、壽司郎和濱壽司大約占有相同規模的市場。其概念、目標市場和價格都相對相似，僅有微小差異。這些競爭對手通常以購物中心和車站為目標據點。<br>
+儘管這兩家連鎖店競爭激烈，但在入門級品項上存在輕微的價格差距。例如，壽司郎標準的稻荷壽司定價為 30 元新台幣，而藏壽司的定價為 40 元新台幣。</p>
+                </div>
+
+                <h2><span class="en-content">Bargaining Powers</span><span class="zh-content">議價能力</span></h2>
+                <div class="en-content">
+                    <p><b>Bargaining Powers of Suppliers(Upstream) - Moderate to High</b><br>
+Kura Sushi’s highly dependent on the freshness of the seafood. With their highly variative seafood demands, they also need them to be delivered on time to maintain their freshness. Because only a few large-scale global suppliers can meet these strict quality and volume requirements, these suppliers have some power to set prices. <br>
+To counter this, Kura Sushi strategically imports its ingredients from approximately 22 different regions (including Norway for salmon, Argentina for prawns, and Spain for pork) to optimize cost efficiency and secure the best quality ingredients available globally. This diverse sourcing strategy also enables them to maintain supply chain stability; by not relying on a single country, they are better protected against regional disruptions, such as the current logistics crisis in the Middle East. </p>
+                    <p><b>Bargain Powers of Buyers(Downstream) - Moderate to High</b><br>
+Taiwanese customers have a high bargaining power due to the low switching cost. While Kura Sushi has several similar rivals, they also have a lot of substitutes/alternatives which are more affordable and higher in volume. The sushi that Kura serves isn’t inimitable. Moreover, the current economic situation (inflation) forces people to choose wiser options for food. However, Kura Sushi effectively mitigates this power through its unique value proposition. The integration of the "Bikkura Pon" gachapon system and seasonal IP collaborations creates a gamified dining experience that acts as a significant "plus point." For customers seeking this specific entertainment value, the power shift moves back toward Kura Sushi, as this experience cannot be easily replicated by standard local restaurants </p>
+                </div>
+                <div class="zh-content">
+                    <p><b>供應商的議價能力（上游）- 中至高</b><br>
+藏壽司高度依賴海鮮的鮮度。由於他們的海鮮需求多樣化，也需要準時交貨以保持新鮮。因為只有少數大型全球供應商能滿足這些嚴格的品質和數量要求，所以這些供應商擁有一定的定價權。<br>
+為了因應這點，藏壽司策略性地從大約 22 個不同地區進口食材（包括挪威的鮭魚、阿根廷的蝦和西班牙的豬肉），以優化成本效益並確保獲得全球最佳品質的食材。這種多樣化的採購策略也使他們能夠保持供應鏈的穩定；藉由不依賴單一國家，他們能更好地防禦區域性中斷，例如目前中東的物流危機。</p>
+                    <p><b>買方的議價能力（下游）- 中至高</b><br>
+由於轉換成本低，台灣顧客擁有很高的議價能力。雖然藏壽司有幾個相似的競爭對手，但他們也有許多更平價、份量更大的替代品。藏壽司提供的壽司並非無法模仿。此外，目前的經濟狀況（通膨）迫使人們在食物上做出更明智的選擇。然而，藏壽司透過其獨特的價值主張有效地削弱了這種力量。整合「扭蛋」系統和季節性 IP 合作創造了遊戲化的用餐體驗，成為一個重要的「加分項」。對於尋求這種特定娛樂價值的顧客來說，權力天平再次向藏壽司傾斜，因為這種體驗是一般當地餐廳難以輕易複製的。</p>
+                </div>
+
+                <h2><span class="en-content">C. Threats from New Entrants and Substitutes</span><span class="zh-content">C. 新進入者與替代品的威脅</span></h2>
+                <div class="en-content">
+                    <p><b>Threats from New Entrants - Very Low</b><br>
+Kura Sushi’s not just selling any sushi. The technology they use, the experiences, the system they use now are inimitable. Any new entrants would have to invest high capital if they want to adopt Kura Sushi’s whole system to imitate them. Kura Sushi would also win in the cost war since they must have reached the economics of scale with their giant global supply chain. </p>
+                    <p><b>Threats from Substitute - Low to Moderate</b><br>
+Kura Sushi’s sushi might be easy to replace with other food options, but their system and dining experience is something that any other restaurant is hard to replicate. Their target is not to make quick and affordable sushi meals, but to give exciting eating experiences. This is the differentiation Kura owns to win the market.</p>
+                </div>
+                <div class="zh-content">
+                    <p><b>新進入者的威脅 - 極低</b><br>
+藏壽司賣的不僅僅是一般的壽司。他們使用的技術、體驗和現有系統都是難以模仿的。任何新進入者如果想採用藏壽司的整套系統來模仿他們，都必須投入高額資本。藏壽司也將在成本戰中獲勝，因為他們憑藉龐大的全球供應鏈必然已經達到了規模經濟。</p>
+                    <p><b>替代品的威脅 - 低至中</b><br>
+藏壽司的壽司可能很容易被其他食物選擇取代，但他們的系統和用餐體驗是任何其他餐廳都難以複製的。他們的目標不是製作快速實惠的壽司餐，而是提供令人興奮的用餐體驗。這正是藏壽司用來贏得市場的差異化優勢。</p>
+                </div>
+                
+                <div class="conclusion-box">
+                    <h3>💡 <span class="en-content">Conclusion</span><span class="zh-content">結論</span></h3>
+                    <p class="en-content">Despite high interfirm rivalry and significant bargaining power from both suppliers and buyers, Kura Sushi protects its market position through a highly diversified 22-region sourcing strategy and an inimitable dining experience that makes the threat of new entrants very low.</p>
+                    <p class="zh-content">儘管同業競爭激烈，且供應商和買方都具有顯著的議價能力，但藏壽司透過高度多樣化的 22 區採購策略以及難以模仿的用餐體驗，成功保護了其市場地位，使得新進入者的威脅變得極低。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="lifecycle" class="page-section">
+            <div class="content-card">
+                <h1><span class="en-content">Industry Lifecycle and recent news</span><span class="zh-content">產業生命週期與最新消息</span></h1>
+                <p><i>(112212060 IBS3 Vicky - AI 50%)</i></p>
+                
+                <div class="en-content">
+                    <p>Based on current economic data and industry analysis as of 2026, the global conveyor-belt sushi (kaitenzushi) industry is currently in the “Mature” stage of its life cycle, though it is actively utilizing international expansion to simulate a secondary “Growth” phase.</p>
+                    <p><b>A. High Market Concentration (The Shakeout has already occurred)</b><br>
+In a Growth stage, an industry is flooded with new, fragmented competitors. In a Mature stage, the market is consolidated into a few massive players.<br>
+The Reality: The conveyor-belt sushi market is an oligopoly dominated by giants. Top players like Food & Life Companies (Sushiro), Kura Sushi, and Zensho Holdings (Hama-Sushi) control the vast majority of global revenue.<br>
+Concrete Example: In Japan, the birthplace and primary market for the industry, Sushiro alone controls roughly 30% of the market share. Smaller, independent conveyor-belt restaurants are actively declining or being acquired because they cannot compete with the purchasing power of these giants.</p>
+                    <p><b>B. Focus on Process Innovation over Product Innovation</b><br>
+When an industry matures, the core product is already universally understood. To win, companies must shift their focus toward process innovation—cutting costs, improving efficiency, and protecting profit margins against inflation.<br>
+The Reality: Kura Sushi is no longer just competing on the taste of its fish; it is competing on operational logistics.<br>
+Concrete Example: Kura Sushi relies heavily on automated tech (robotic sushi makers, RFID-tagged plates to track consumption data and reduce food waste, and AI camera systems to monitor tables). This relentless drive for technological efficiency is a hallmark of a mature industry trying to protect its bottom line against rising labor and seafood costs.</p>
+                    <p><b>C. Geographic Expansion as a Growth Substitute</b><br>
+Because their primary domestic market (Japan) is highly saturated and mature, major players are forced to look overseas to find new revenue streams and satisfy shareholders.<br>
+The Reality: The international markets (like the USA, Taiwan, and Thailand) are acting as localized "Growth" pockets for an otherwise mature global industry.<br>
+Concrete Example: Kura Sushi is heavily prioritizing its aggressive rollout of new stores across the United States and mainland China to offset the stagnant, saturated market conditions back home in Japan. Similarly, Sushiro and Hama-Sushi are aggressively expanding into Southeast Asian markets like Thailand to capture new demographics.</p>
+                    
+                    <p>Based on current corporate strategy and market data, the conveyor-belt sushi industry in Taiwan has also officially entered the “Mature” stage of its life cycle. When it comes to Taiwan, we can see how this actually works. Taiwan experienced a massive "Growth" phase over the last decade as Japanese giants entered the market, the landscape has now stabilized. Here is the logical breakdown of why the Taiwanese market is mature, using Kura Sushi Asia Co., Ltd.as the primary indicator:</p>
+                    
+                    <p><b>Market Saturation & Decelerating Expansion</b><br>
+In a Growth stage, a company opens stores as fast as physically possible to capture untapped land grabs. In a Mature stage, the footprint reaches a saturation point, and new store openings intentionally slow down to prevent cannibalizing existing sales.<br>
+The Reality: The Taiwanese market is now densely populated by the "Big Three" (Sushiro, Kura Sushi, and Hama-Sushi), leaving very few premium, high-traffic real estate locations left to conquer.<br>
+Concrete Example: Kura Sushi Asia recently hit its major milestone of operating 50 stores across Taiwan. Having achieved this density, executive leadership explicitly announced they are dialing back the pace of new store openings on the island.</p>
+
+                    <p><b>Transitioning to a "Cash Cow" for Overseas Ventures</b><br>
+According to the Boston Consulting Group (BCG) matrix, when a product or market enters the Mature stage, it becomes a "Cash Cow." The company milks the reliable, steady profits from this mature market to fund high-risk, high-reward expansion in Embryonic or Growth markets.<br>
+The Reality: Taiwan is no longer Kura Sushi Asia's primary growth engine; it is their financial foundation.<br>
+Concrete Example: Because Taiwan generates highly stable revenue, Kura Sushi Asia is using its Taiwanese operations as a literal springboard and financial backer for its aggressive, high-capital ventures into mainland China (such as Shanghai) and Southeast Asia.</p>
+
+                    <p><b>Reliance on Promotions and Efficiency over Novelty</b><br>
+In a mature market, the sheer novelty of a conveyor-belt sushi restaurant no longer guarantees a line out the door. Companies must rely on marketing, brand collaborations, and operational efficiency to maintain foot traffic.<br>
+The Reality: Rather than relying on the excitement of brand-new store openings, Kura Sushi Taiwan heavily relies on limited-time promotional IP collaborations (like their exclusive Bikkura-Pon anime/character toy tie-ins) and seasonal holidays to drive localized revenue spikes.</p>
+
+                    <p>This strategic shift from aggressive domestic growth to mature stabilization and overseas funding is directly confirmed by Kura Sushi Asia's corporate roadmap.<br>
+If we look at recent news, “Kura Sushi” financial performance has been quite impressive, and the numbers show that the company is doing very well.</p>
+
+                    <p><b>A. Global Performance (Focusing on Kura Sushi USA & Japan Parent)</b><br>
+Kura Sushi USA (NASDAQ: KRUS) just released its Fiscal Second Quarter 2026 Financial Results on April 7, 2026. Additionally, the Japanese parent company released its FY 2025 data (ending October 31, 2025) showing steady top-line growth.<br>
+Total Revenue: $80.0 million. This represents a massive 23.2% year-over-year growth compared to Q2 2025 ($64.9 million).<br>
+Earnings Per Share (EPS): -$0.04. While still operating at a net loss ($-1.7 million) due to heavy capital investments in new restaurants, this was a massive beat on Wall Street expectations. Analysts had forecasted an EPS of -$0.17, making this a 76.47% positive earnings surprise.<br>
+Comparable Restaurant Sales: Up 8.6%. This is a highly positive indicator because the growth was split perfectly evenly—4.3% came from increased foot traffic and 4.3% came from menu price increases/mix.<br>
+Adjusted EBITDA: $5.5 million, marking a 103.7% increase from the prior year.<br>
+Operating Margins: Restaurant-level operating profit sat at 18.2% of sales ($14.6 million). The company significantly improved its labor costs, shrinking labor from 34.8% of sales last year down to 30.7% this year through operational efficiencies.<br>
+Growth Outlook: They are targeting $333 million to $335 million in total sales for the full year and maintaining a 20% unit growth rate (expanding from 88 to over 100 locations soon).</p>
+
+                    <p><b>B. Kura Sushi USA Inc (KRUS) Q3 Earnings Revenue </b><br>
+Even though their older restaurants saw a slight drop in customer visits, Kura Sushi's overall sales still reached $74 million. This success comes from their strong expansion strategy, as they successfully opened new locations and turned their previous losses into a $0.6 million profit.<br>
+Total Sales = $74 Million Their total sales increased by 17.3% compared to the previous year (which was $63.1 million). This huge jump is a key indicator that the company is growing rapidly.<br>
+Net Income = $0.6 Million ($565,000) This is a fantastic turning point for them. In the previous year, they experienced a net loss of $0.6 million. Now, they have successfully turned things around and become profitable!<br>
+Comparable Restaurant Sales = Dropped by 2.1% This is an important metric in the restaurant business. It means that if we only look at their older, existing restaurants (ignoring the newly opened branches), their sales actually went down slightly because foot traffic (the number of visiting customers) decreased by 2.9%.<br>
+Expansion Strategy So, how did their total sales increase so much if fewer people visited their older restaurants? The answer is their aggressive expansion. They achieved those high overall numbers by opening many new locations. In fact, they are targeting to open 15 new restaurants within a single fiscal year.</p>
+
+                    <p><b>C. Taiwan Market Only (Kura Sushi Asia Co., Ltd.)</b><br>
+Kura Sushi Asia Co., Ltd. operates independently to manage the Taiwanese market and acts as the bridge for broader Asian expansion. The Board recently approved and announced the 2025 Full Year Consolidated Financial Report on March 11, 2026.<br>
+Total Operating Revenue: NT$5.71 billion (5,709,802 thousand NTD). The company continues to draw reliable top-line revenue from its highly saturated market, reaching 62 store locations as of January 2026.<br>
+Gross Profit: NT$2.32 billion (2,327,886 thousand NTD). This represents a gross margin of roughly 40.7%, indicating that despite rising global seafood costs, they are passing costs effectively to consumers and maintaining their raw material economics.<br>
+Net Profit: NT$110.16 million (110,164 thousand NTD) attributable to owners.<br>
+Earnings Per Share (EPS): NT$2.35 for the full year.<br>
+Balance Sheet Health: Total assets sit at NT$5.03 billion against liabilities of NT$3.28 billion. The company holds strong equity (NT$1.75 billion) which is providing the capital necessary for their current goal of utilizing Taiwan as a financial "springboard" to expand into mainland China.</p>
+                </div>
+                
+                <div class="zh-content">
+                    <p>根據截至 2026 年的經濟數據和產業分析，全球迴轉壽司產業目前正處於生命週期的「成熟」階段，儘管它正積極利用國際擴張來模擬第二次的「成長」階段。</p>
+                    <p><b>A. 高市場集中度（洗牌已經發生）</b><br>
+在成長階段，一個產業會充斥著新的、零散的競爭對手。在成熟階段，市場會整合為少數幾家大型巨頭。<br>
+現實情況：迴轉壽司市場是由巨頭主導的寡占市場。像 Food & Life Companies（壽司郎）、藏壽司和 Zensho Holdings（濱壽司）等頂級業者控制了全球絕大部分的營收。<br>
+具體例子：在日本這個產業的發源地和主要市場，單是壽司郎就控制了大約 30% 的市佔率。規模較小、獨立的迴轉壽司餐廳正積極減少或被收購，因為他們無法與這些巨頭的購買力競爭。</p>
+                    <p><b>B. 專注於流程創新而非產品創新</b><br>
+當產業成熟時，核心產品已被普遍理解。為了取勝，公司必須將重點轉向流程創新——降低成本、提高效率，並保護利潤率免受通膨影響。<br>
+現實情況：藏壽司不再僅僅在魚的味道上競爭；它在營運物流上競爭。<br>
+具體例子：藏壽司嚴重依賴自動化技術（機器人壽司師傅、追蹤消費數據和減少食物浪費的 RFID 標籤盤子，以及監控桌面的 AI 攝影機系統）。這種對技術效率的無情追求，是一個成熟產業試圖在不斷上漲的勞動力和海鮮成本下保護其底線的標誌。</p>
+                    <p><b>C. 地理擴張作為成長的替代品</b><br>
+因為其主要的國內市場（日本）已經高度飽和和成熟，主要業者被迫將目光投向海外以尋找新的收入來源並滿足股東。<br>
+現實情況：國際市場（如美國、台灣和泰國）正在充當這個成熟全球產業的局部「成長」口袋。<br>
+具體例子：藏壽司正將重點放在積極於美國和中國大陸開設新店，以抵銷日本國內停滯、飽和的市場狀況。同樣地，壽司郎和濱壽司也正積極擴張到泰國等東南亞市場，以吸引新的人口群體。</p>
+                    
+                    <p>根據目前的企業戰略和市場數據，台灣的迴轉壽司產業也已正式進入其生命週期的「成熟」階段。談到台灣，我們可以看出這實際上是如何運作的。台灣在過去十年間經歷了日本巨頭進入市場的大規模「成長」階段，現在格局已經穩定。以下是使用亞洲藏壽司股份有限公司作為主要指標，邏輯分析為何台灣市場已經成熟的原因：</p>
+                    
+                    <p><b>市場飽和與擴張減速</b><br>
+在成長階段，公司會盡可能快地開設店鋪以搶占未開發的市場。在成熟階段，足跡達到飽和點，新店開設刻意放緩，以防止蠶食現有銷售額。<br>
+現實情況：台灣市場現在已被「三大巨頭」（壽司郎、藏壽司和濱壽司）密集占據，剩下可供征服的優質、高人流量黃金地段已經很少。<br>
+具體例子：亞洲藏壽司最近達到了在台灣經營 50 家店鋪的重要里程碑。在達到這個密度後，執行高層明確宣布他們正在放緩在島內開設新店的步伐。</p>
+
+                    <p><b>轉型為海外合資企業的「金牛」</b><br>
+根據波士頓顧問集團 (BCG) 矩陣，當一個產品或市場進入成熟階段時，它就會成為「金牛」。公司會從這個成熟市場中榨取可靠、穩定的利潤，以資助在胚胎或成長市場中高風險、高回報的擴張。<br>
+現實情況：台灣不再是亞洲藏壽司的主要成長引擎；它是他們的財務基礎。<br>
+具體例子：因為台灣產生高度穩定的營收，亞洲藏壽司正將其台灣營運作為字面上的跳板和財務後盾，用於其在中國大陸（如上海）和東南亞積極的、高資本的投資。</p>
+
+                    <p><b>依賴促銷和效率勝過新鮮感</b><br>
+在成熟市場中，迴轉壽司餐廳純粹的新鮮感已不再是門庭若市的保證。公司必須依賴行銷、品牌合作和營運效率來維持客流量。<br>
+現實情況：台灣藏壽司不再依賴新店開幕的興奮感，而是嚴重依賴限時的促銷 IP 合作（如他們獨家的扭蛋動漫/角色玩具聯名）和季節性假期來帶動局部的營收高峰。</p>
+
+                    <p>這種從積極的國內成長轉向成熟穩定和提供海外資金的戰略轉變，直接被亞洲藏壽司的企業路線圖所證實。<br>
+如果我們看看最近的新聞，「藏壽司」的財務表現相當亮眼，數據顯示公司營運狀況非常良好。</p>
+
+                    <p><b>A. 全球表現（聚焦美國藏壽司和日本母公司）</b><br>
+美國藏壽司 (NASDAQ: KRUS) 剛在 2026 年 4 月 7 日發布了其 2026 財年第二季度的財務業績。此外，日本母公司發布的 2025 財年數據（截至 2025 年 10 月 31 日）顯示了穩定的頂線成長。<br>
+總營收：8000 萬美元。這代表與 2025 年第二季度（6490 萬美元）相比，年增率高達 23.2%。<br>
+每股盈餘 (EPS)：-0.04 美元。雖然由於對新餐廳的大量資本投資，目前仍處於淨虧損狀態（-170 萬美元），但這大大超越了華爾街的預期。分析師此前預測 EPS 為 -0.17 美元，這使得此次獲利超乎預期 76.47%。<br>
+同店銷售額：成長 8.6%。這是一個非常正面的指標，因為成長完全平均分配——4.3% 來自客流量增加，4.3% 來自菜單價格調漲/組合。<br>
+調整後 EBITDA：550 萬美元，較去年同期增長 103.7%。<br>
+營業利潤率：餐廳級別的營業利潤佔銷售額的 18.2%（1460 萬美元）。公司顯著改善了勞動成本，透過營運效率將勞動成本從去年的 34.8% 降至今年的 30.7%。<br>
+成長展望：他們今年的總銷售額目標為 3.33 億至 3.35 億美元，並維持 20% 的店數成長率（預計很快將從 88 家擴張至超過 100 家）。</p>
+
+                    <p><b>B. 美國藏壽司 (KRUS) 第三季度營收</b><br>
+儘管他們較舊的餐廳客流量略有下降，但藏壽司的總銷售額仍達到 7400 萬美元。這個成功來自於他們強勁的擴張戰略，因為他們成功開設了新據點，並將先前的虧損扭轉為 60 萬美元的利潤。<br>
+總銷售額 = 7400 萬美元。他們的總銷售額與前一年（6310 萬美元）相比成長了 17.3%。這個巨大的躍升是公司正在快速成長的關鍵指標。<br>
+淨利潤 = 60 萬美元 ($565,000)。這對他們來說是一個極好的轉折點。在前一年，他們經歷了 60 萬美元的淨虧損。現在，他們成功扭轉了局面並開始獲利！<br>
+同店銷售額 = 下降 2.1%。這在餐飲業中是一個重要的指標。這意味著如果我們只看他們較舊、現有的餐廳（忽略新開的分店），他們的銷售額實際上略微下降，因為客流量（來訪的顧客數量）減少了 2.9%。<br>
+擴張戰略：那麼，如果造訪舊餐廳的人變少了，他們的總銷售額怎麼會增加這麼多呢？答案就是他們積極的擴張。他們透過開設許多新據點達成了這些亮眼的整體數字。事實上，他們的目標是在單一財政年度內開設 15 家新餐廳。</p>
+
+                    <p><b>C. 僅台灣市場（亞洲藏壽司股份有限公司）</b><br>
+亞洲藏壽司獨立營運以管理台灣市場，並作為更廣泛亞洲擴張的橋樑。董事會最近在 2026 年 3 月 11 日批准並宣布了 2025 年全年合併財務報告。<br>
+總營業收入：新台幣 57.1 億元（5,709,802 仟元）。公司繼續從其高度飽和的市場中獲取可靠的頂線營收，截至 2026 年 1 月已達到 62 家分店。<br>
+毛利：新台幣 23.2 億元（2,327,886 仟元）。這代表大約 40.7% 的毛利率，顯示儘管全球海鮮成本不斷上漲，他們仍有效地將成本轉嫁給消費者，並維持了其原物料的經濟效益。<br>
+淨利潤：歸屬於母公司業主為新台幣 1.1016 億元（110,164 仟元）。<br>
+每股盈餘 (EPS)：全年為新台幣 2.35 元。<br>
+資產負債表健康狀況：總資產為新台幣 50.3 億元，負債為 32.8 億元。公司持有強勁的權益（新台幣 17.5 億元），這為他們目前利用台灣作為「跳板」以擴張至中國大陸的目標提供了必要的資金。</p>
+                </div>
+
+                <div class="conclusion-box">
+                    <h3>💡 <span class="en-content">Conclusion</span><span class="zh-content">結論</span></h3>
+                    <p class="en-content">Operating in a mature market with high saturation, Kura Sushi is shifting its focus from simple store expansion toward process innovation (AI/automation) and utilizing stable markets like Taiwan as financial "Cash Cows" to fund aggressive international growth in regions like mainland China and the USA.</p>
+                    <p class="zh-content">在高度飽和的成熟市場中營運，藏壽司正將重心從單純的展店轉向流程創新（AI/自動化），並利用如台灣等穩定的市場作為財務「金牛」，以資助在中國大陸和美國等地區積極的國際擴張。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="conclusion4p" class="page-section">
+            <div class="content-card">
+                <h1><span class="en-content">The 4P Conclusion</span><span class="zh-content">4P 結論</span></h1>
+                
+                <h2><span class="en-content">Position (Status and positioning)</span><span class="zh-content">地位 (現況與定位)</span></h2>
+                <div class="en-content">
+                    <p>Kura Sushi currently holds a leading position in Taiwan’s conveyor-belt sushi industry, operating a network of over 60 stores. The company successfully distinguishes itself through a Differentiation Strategy centered on its unique, high-tech automated system. A critical factor in this market standing is the continuous innovation of the Bikkura Pon gamification system, which leverages seasonal IP collaborations to drive customer loyalty and repeatable traffic, effectively positioning the brand as a leader in the "eat-ertainment" segment.</p>
+                </div>
+                <div class="zh-content">
+                    <p>藏壽司目前在台灣迴轉壽司產業中處於領先地位，經營超過 60 家門市的網絡。公司透過以其獨特、高科技自動化系統為中心的差異化策略成功地脫穎而出。在市場立足的一個關鍵因素是「扭蛋」遊戲化系統的持續創新，它利用季節性的 IP 合作來推動顧客忠誠度和重複客流量，有效地將品牌定位為「餐飲娛樂」領域的領導者。</p>
+                </div>
+                
+                <h2><span class="en-content">Priority (Top actions for the coming years)</span><span class="zh-content">優先事項 (未來幾年的首要行動)</span></h2>
+                <div class="en-content">
+                    <p>Looking at the current instability in the Strait of Hormuz and its impact on oil/gas and other ingredients costs, Kura must prioritize Supply Chain Resilience. The strategic action is to leverage their 22-region sourcing network to bypass high-tariff or war-impacted routes, ensuring that the "Big 4" safety standards are maintained without passing 100% of the cost increase to price-sensitive customers. Also, Kura’s current plan to reallocate their capital from Hong Kong to Taiwan is a priority too since Taiwan is a country with a huge market for their products. By owning more stores, Kura can reach economies of scale in production and suppliers will earn less bargaining power to giant branches like Kura Sushi.</p>
+                </div>
+                <div class="zh-content">
+                    <p>考慮到目前荷莫茲海峽的不穩定性及其對油氣和其他食材成本的影響，藏壽司必須優先考慮「供應鏈韌性」。策略行動是利用其 22 個地區的採購網絡來避開高關稅或受戰爭影響的路線，確保在維持「四大」安全標準的同時，不將 100% 的成本增加轉嫁給對價格敏感的顧客。此外，藏壽司目前將資金從香港重新分配到台灣的計畫也是優先事項，因為台灣對其產品有巨大的市場。透過擁有更多店鋪，藏壽司能在生產上達到規模經濟，而供應商對像藏壽司這樣龐大分支機構的議價能力將會降低。</p>
+                </div>
+
+                <h2><span class="en-content">Posture (Competitive stance)</span><span class="zh-content">姿態 (競爭立場)</span></h2>
+                <div class="en-content">
+                    <p>Kura Sushi doesn't want to be just another sushi spot; they’re turning into a "dining entertainment platform.” Basically, they aren't just selling food—they're selling an experience. Instead of getting into a "race to the bottom" by fighting with rivals over who has the lowest prices, they focus on being unique with things like the Bikkura Pon games and their Smart Kura tech. Right now, they’ve decided to put all their energy and money into the Taiwan market because it’s their most stable and reliable performer</p>
+                </div>
+                <div class="zh-content">
+                    <p>藏壽司不想只是一家普通的壽司店；他們正在轉變成一個「餐飲娛樂平台」。基本上，他們賣的不僅僅是食物——他們賣的是一種體驗。他們沒有陷入「逐底競爭」，與對手爭奪誰的價格最低，而是專注於透過扭蛋遊戲和 Smart Kura 技術等事物來保持獨特性。目前，他們決定將所有的精力和資金投入台灣市場，因為這是他們最穩定、最可靠的表現者。</p>
+                </div>
+
+                <h2><span class="en-content">Profit Potential (Sustainability of future interests)</span><span class="zh-content">獲利潛力 (未來利益的永續性)</span></h2>
+                <div class="en-content">
+                    <p>Even though their sales doubled to NT$5.71 billion by 2025, their actual profit margin dropped to 4.6% because opening new stores and dealing with inflation is really expensive. To fix this and stay profitable in the long run, they are planning to use more AI and robots to cut down on staff costs. Investors still think they have a bright future (which is why their stock ratio is still high) because they believe that as Kura Sushi gets even bigger, they’ll be able to handle their costs much better</p>
+                </div>
+                <div class="zh-content">
+                    <p>即使他們的銷售額到 2025 年翻倍至 57.1 億新台幣，他們實際的利潤率卻下降至 4.6%，因為開設新店和應對通膨真的非常昂貴。為了解決這個問題並在長期內保持獲利，他們正計畫使用更多的 AI 和機器人來削減人事成本。投資者仍然認為他們有一個光明的未來（這也是為什麼他們的股票本益比仍然很高），因為他們相信，隨著藏壽司變得更加龐大，他們將能夠更好地控制成本。</p>
+                </div>
+                
+                <div class="conclusion-box">
+                    <h3>💡 <span class="en-content">Conclusion</span><span class="zh-content">結論</span></h3>
+                    <p class="en-content">To summarize the 4Ps: Kura Sushi secures its future by positioning as an "eat-ertainment" brand, prioritizing supply chain resilience, maintaining an experience-driven competitive posture over price wars, and utilizing technology to protect long-term profit potentials against inflation.</p>
+                    <p class="zh-content">總結 4P：藏壽司透過定位為「餐飲娛樂」品牌、優先考慮供應鏈韌性、維持以體驗為導向的競爭姿態而非價格戰，並利用科技來保護長期的獲利潛力免受通膨影響，從而確保其未來的發展。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="sources" class="page-section">
+            <div class="content-card">
+                <h1><span class="en-content">Sources</span><span class="zh-content">資料來源</span></h1>
+                
+                <div class="en-content">
+                    <p>Source:<br> 
+                        <a href="https://investor.kurasushi.tw/en/organization-of-the-company" target="_blank">https://investor.kurasushi.tw/en/organization-of-the-company</a><br>
+                        <a href="https://www.kurasushi.co.jp/trans/common/pdf/kura_rawmaterial_en.pdf" target="_blank">https://www.kurasushi.co.jp/trans/common/pdf/kura_rawmaterial_en.pdf</a>
+                    </p>
+                    <p>The Resources News:<br>
+                        <a href="https://matrixbcg.com/blogs/competitors/food-and-life#:~:text=Market%20share%20and%20scale,Revenue%20trajectory" target="_blank">https://matrixbcg.com/blogs/competitors/food-and-life...</a><br>
+                        <a href="https://www.theworldfolio.com/interviews/kura-sushi-bets-on-patents-smart-tech-and-sustainability-to-keep-conveyorbelt-sushi-fresh-worldwide/7339/" target="_blank">https://www.theworldfolio.com/interviews/kura-sushi-bets-on-patents-smart-tech...</a><br>
+                        <a href="https://asia.nikkei.com/business/food-beverage/japanese-sushi-chains-build-up-an-appetite-for-overseas-expansion" target="_blank">https://asia.nikkei.com/business/food-beverage/japanese-sushi-chains-build-up-an-appetite-for-overseas-expansion</a><br>
+                        <a href="https://www.marketreportanalytics.com/reports/conveyor-belt-sushi-251385" target="_blank">https://www.marketreportanalytics.com/reports/conveyor-belt-sushi-251385</a><br>
+                        <a href="https://www.taipeitimes.com/News/biz/archives/2023/03/11/2003795885" target="_blank">https://www.taipeitimes.com/News/biz/archives/2023/03/11/2003795885</a><br>
+                        <a href="https://ir.kurausa.com/" target="_blank">https://ir.kurausa.com/</a><br>
+                        <a href="https://www.investing.com/news/transcripts/earnings-call-transcript-kura-sushi-q2-2026-beats-eps-forecasts-shares-dip-slightly-93CH-4601818" target="_blank">https://www.investing.com/news/transcripts/earnings-call-transcript-kura-sushi...</a><br>
+                        <a href="https://www.gurufocus.com/news/2965082/kura-sushi-usa-inc-krus-q3-earnings-eps-of-005-beats-estimate-revenue-surpasses-expectations-at-74-million" target="_blank">https://www.gurufocus.com/news/2965082/kura-sushi-usa-inc...</a><br>
+                        <a href="https://www.fastcasual.com/news/kura-sushi-overall-sales-climb-amid-dip-in-comps/" target="_blank">https://www.fastcasual.com/news/kura-sushi-overall-sales-climb-amid-dip-in-comps/</a><br>
+                        <a href="https://investor.kurasushi.tw/en/news/big-news/announcement-of-the-board-resolutions-on-approving-the-2025-consolidated-financial-report?locale=en" target="_blank">https://investor.kurasushi.tw/en/news/big-news...</a>
+                    </p>
+                </div>
+                <div class="zh-content">
+                    <p>資料來源:<br> 
+                        <a href="https://investor.kurasushi.tw/en/organization-of-the-company" target="_blank">https://investor.kurasushi.tw/en/organization-of-the-company</a><br>
+                        <a href="https://www.kurasushi.co.jp/trans/common/pdf/kura_rawmaterial_en.pdf" target="_blank">https://www.kurasushi.co.jp/trans/common/pdf/kura_rawmaterial_en.pdf</a>
+                    </p>
+                    <p>資源新聞:<br>
+                        <a href="https://matrixbcg.com/blogs/competitors/food-and-life#:~:text=Market%20share%20and%20scale,Revenue%20trajectory" target="_blank">https://matrixbcg.com/blogs/competitors/food-and-life...</a><br>
+                        <a href="https://www.theworldfolio.com/interviews/kura-sushi-bets-on-patents-smart-tech-and-sustainability-to-keep-conveyorbelt-sushi-fresh-worldwide/7339/" target="_blank">https://www.theworldfolio.com/interviews/kura-sushi-bets-on-patents-smart-tech...</a><br>
+                        <a href="https://asia.nikkei.com/business/food-beverage/japanese-sushi-chains-build-up-an-appetite-for-overseas-expansion" target="_blank">https://asia.nikkei.com/business/food-beverage/japanese-sushi-chains-build-up-an-appetite-for-overseas-expansion</a><br>
+                        <a href="https://www.marketreportanalytics.com/reports/conveyor-belt-sushi-251385" target="_blank">https://www.marketreportanalytics.com/reports/conveyor-belt-sushi-251385</a><br>
+                        <a href="https://www.taipeitimes.com/News/biz/archives/2023/03/11/2003795885" target="_blank">https://www.taipeitimes.com/News/biz/archives/2023/03/11/2003795885</a><br>
+                        <a href="https://ir.kurausa.com/" target="_blank">https://ir.kurausa.com/</a><br>
+                        <a href="https://www.investing.com/news/transcripts/earnings-call-transcript-kura-sushi-q2-2026-beats-eps-forecasts-shares-dip-slightly-93CH-4601818" target="_blank">https://www.investing.com/news/transcripts/earnings-call-transcript-kura-sushi...</a><br>
+                        <a href="https://www.gurufocus.com/news/2965082/kura-sushi-usa-inc-krus-q3-earnings-eps-of-005-beats-estimate-revenue-surpasses-expectations-at-74-million" target="_blank">https://www.gurufocus.com/news/2965082/kura-sushi-usa-inc...</a><br>
+                        <a href="https://www.fastcasual.com/news/kura-sushi-overall-sales-climb-amid-dip-in-comps/" target="_blank">https://www.fastcasual.com/news/kura-sushi-overall-sales-climb-amid-dip-in-comps/</a><br>
+                        <a href="https://investor.kurasushi.tw/en/news/big-news/announcement-of-the-board-resolutions-on-approving-the-2025-consolidated-financial-report?locale=en" target="_blank">https://investor.kurasushi.tw/en/news/big-news...</a>
+                    </p>
+                </div>
+                
+                <div class="conclusion-box">
+                    <h3>💡 <span class="en-content">Conclusion</span><span class="zh-content">結論</span></h3>
+                    <p class="en-content">The strategic analysis is grounded in a robust mix of official corporate disclosures, investor reports, and credible global business news outlets confirming Kura Sushi's international growth trajectory.</p>
+                    <p class="zh-content">這份戰略分析建立在官方企業聲明、投資者報告以及證實藏壽司國際成長軌跡的可靠全球商業新聞媒體的堅實基礎上。</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="main-footer">
+        <div>
+            <p><strong>Advisor:</strong> Shihmin Lo, Ph.D.</p>
+            <p>Dept. of International Business Studies, NCNU</p>
+            <p>SPA Version v2.1.0 | © 2026 Term Project 1</p>
+        </div>
+        <div class="team-list">
+            <span>Tarastra (112212011)</span>
+            <span>Delia (112212030)</span>
+            <span>Alice (112212031)</span>
+            <span>Gisele (112212051)</span>
+            <span>Vivian (112212052)</span>
+            <span>Vicky (112212060)</span>
+        </div>
+    </footer>
+
+    <script>
+        // Language Toggle Logic
+        function setLanguage(lang) {
+            document.body.className = 'lang-' + lang;
+            document.getElementById('btn-en').classList.remove('active');
+            document.getElementById('btn-zh').classList.remove('active');
+            document.getElementById('btn-' + lang).classList.add('active');
+        }
+
+        // Dark/Light Mode Toggle Logic
+        function toggleTheme() {
+            const body = document.body;
+            const themeBtn = document.getElementById('theme-btn');
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                themeBtn.innerHTML = '☀️ Light Mode';
+            } else {
+                themeBtn.innerHTML = '🌙 Dark Mode';
+            }
+        }
+
+        // Sidebar Toggle Logic (Desktop & Mobile)
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const footer = document.getElementById('main-footer');
+            
+            if (window.innerWidth > 1024) {
+                // Desktop logic
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+                footer.classList.toggle('expanded');
+            } else {
+                // Mobile logic
+                sidebar.classList.toggle('mobile-open');
+            }
+        }
+
+        // Page Navigation Logic
+        function showPage(pageId) {
+            // Hide all sections
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            // Show target section
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update active state in sidebar
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Auto-close sidebar on mobile after clicking
+            if (window.innerWidth <= 1024) {
+                document.getElementById('sidebar').classList.remove('mobile-open');
+            }
+            // Scroll to top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
